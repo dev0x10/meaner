@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 
   // configurable paths
   var yeomanConfig = {
-    app: 'app',
+    app: 'public',
     dist: 'dist'
   };
 
@@ -21,33 +21,59 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     watch: {
-      coffee: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-        tasks: ['coffee:dist']
-      },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.coffee'],
-        tasks: ['coffee:test']
-      },
       compass: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
         tasks: ['compass']
       },
-      livereload: {
-        files: [
-          '<%= yeoman.app %>/{,*/}*.html',
-          '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-        ],
-        tasks: ['livereload']
+      ejs: {
+        files: ['views/**'],
+        options: {
+          livereload: true
+        }
+      },
+      js: {
+        files: ['public/scripts/**', 'app/**/*.js'],
+        tasks: ['jshint'],
+        options: {
+          livereload: true
+        }
+      },
+      html: {
+        files: ['public/partials/**'],
+        options: {
+          livereload: true
+        }
+      },
+      css: {
+        files: ['public/styles/**'],
+        options: {
+          livereload: true
+        }
+      }
+    },
+    nodemon: {
+      dev: {
+        options: {
+          file: 'server.js',
+          args: [],
+          ignoredFiles: ['README.md', 'node_modules/**', '.DS_Store', '._.DS_Store'],
+          watchedExtensions: ['js'],
+          watchedFolders: ['app', 'config'],
+          debug: true,
+          delayTime: 1,
+          env: {
+            PORT: 1337
+          },
+          cwd: __dirname
+        }
       }
     },
     connect: {
       options: {
-        port: 9000,
+        port: 1337,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost'
+
       },
       livereload: {
         options: {
@@ -97,6 +123,12 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js'
       ]
+    },
+    concurrent: {
+      tasks: ['nodemon', 'watch'],
+      options: {
+        logConcurrentOutput: true
+      }
     },
     karma: {
       unit: {
@@ -260,21 +292,25 @@ module.exports = function (grunt) {
     }
   });
 
+  //Force JSHint to continue on warning
+  grunt.option('force', true);
+
   grunt.renameTask('regarde', 'watch');
+
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-concurrent');
+  grunt.loadNpmTasks('grunt-nodemon');
 
   grunt.registerTask('server', [
     'clean:server',
     'coffee:dist',
     'compass:server',
-    'livereload-start',
-    'connect:livereload',
-    'open',
-    'watch'
+    'jshint',
+    'concurrent'
   ]);
 
   grunt.registerTask('test', [
     'clean:server',
-    'coffee',
     'compass',
     'connect:test',
     'karma'
@@ -287,7 +323,6 @@ module.exports = function (grunt) {
     'coffee',
     'compass:dist',
     'useminPrepare',
-    'imagemin',
     'cssmin',
     'htmlmin',
     'concat',

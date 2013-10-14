@@ -3,12 +3,16 @@
  */
 
 module.exports = function (app) {
-    app.get('/partials/:view', function (req, res) {
-        if(!req.params.view) return;
-        res.render("public/partials/" + req.params.view);
-    });
+  app.get('/partials/:view', function (req, res) {
+    if (!req.params.view) return;
+    res.render("partials/" + req.params.view);
+  });
 
-    app.get("/", function(req, res) {
-        res.render("index");
-    });
+  app.get("/", function (req, res) {
+    res.render("index");
+  });
+
+  app.get("*", function (req, res) {
+    res.render("index");
+  });
 }

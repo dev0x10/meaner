@@ -4,10 +4,12 @@
 
 var express = require("express"),
     app = express(),
-    mongoose = require("mongoose"),
     config = require("./config/config");
 
 app.configure(function() {
+    //put the router above static
+    //ref: http://stackoverflow.com/questions/12695591/node-js-express-js-how-does-app-router-work
+    app.use(app.router);
     app.use(express.static(__dirname + "/public"));
     app.use(express.logger('dev'));
     app.use(express.cookieParser());
@@ -19,7 +21,6 @@ app.configure(function() {
     app.set("views", __dirname + "/app/views");
     app.set('view options', { layout: false });
     app.set("view engine", "ejs");
-    app.use(app.router);
 });
 
 app.configure('production', function(){
@@ -30,8 +31,11 @@ app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
+//routes handler
 require("./config/routes")(app);
 
-app.listen(config.server.port, function() {
+var server = require('http').createServer(app);
+
+server.listen(config.server.port, function() {
     console.log("Server starts on: " + config.server.protocol + "://" + config.server.host + ":" + config.server.port);
 })

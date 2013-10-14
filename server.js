@@ -9,7 +9,7 @@ var express = require("express"),
 
 app.configure(function() {
     app.use(express.static(__dirname + "/public"));
-    app.use(express.logger());
+    app.use(express.logger('dev'));
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(express.session({
@@ -19,10 +19,15 @@ app.configure(function() {
     app.set("views", __dirname + "/app/views");
     app.set('view options', { layout: false });
     app.set("view engine", "ejs");
+    app.use(app.router);
 });
 
-app.configure("development", function () {
-    app.use(express.errorHandler());
+app.configure('production', function(){
+  app.use(express.errorHandler());
+});
+
+app.configure('development', function(){
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 require("./config/routes")(app);

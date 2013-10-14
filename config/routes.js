@@ -8,7 +8,7 @@ module.exports = function (app) {
         res.render("public/partials/" + req.params.view);
     });
 
-    app.get("/*", function(req, res) {
+    app.get("/", function(req, res) {
         res.render("index");
     });
 }

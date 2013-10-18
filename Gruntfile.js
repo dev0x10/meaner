@@ -26,26 +26,20 @@ module.exports = function (grunt) {
         tasks: ['compass']
       },
       ejs: {
-        files: ['views/**'],
+        files: ['app/views/**'],
         options: {
           livereload: true
         }
       },
       js: {
-        files: ['public/scripts/**', 'app/**/*.js'],
+        files: ['<%= yeoman.app %>/scripts/**', 'app/**/*.js'],
         tasks: ['jshint'],
         options: {
           livereload: true
         }
       },
-      html: {
-        files: ['public/partials/**'],
-        options: {
-          livereload: true
-        }
-      },
       css: {
-        files: ['public/styles/**'],
+        files: ['<%= yeoman.app %>/styles/**'],
         options: {
           livereload: true
         }

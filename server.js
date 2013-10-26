@@ -7,9 +7,6 @@ var express = require("express"),
     config = require("./config/config");
 
 app.configure(function() {
-    //put the router above static
-    //ref: http://stackoverflow.com/questions/12695591/node-js-express-js-how-does-app-router-work
-    app.use(app.router);
     app.use(express.static(__dirname + "/public"));
     app.use(express.logger('dev'));
     app.use(express.cookieParser());
